@@ -3,12 +3,12 @@
 # Recipe:: rbenv
 #
 
-include_recipe "rbenv::default"
-include_recipe "rbenv::ruby_build"
+node.default['rbenv']['rubies'] = [ "#{node[:app][:ruby_version]}" ]
 
-rbenv_ruby node[:app][:ruby_version] do
-  global true
-end
+include_recipe "ruby_rbenv::system"
+include_recipe "ruby_rbenv::ruby_build"
+
+#rbenv_ruby node[:app][:ruby_version]
 
 rbenv_gem "bundler" do
   ruby_version node[:app][:ruby_version]

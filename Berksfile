@@ -7,5 +7,5 @@ cookbook "hostname"
 cookbook "git"
 cookbook "nginx"
 cookbook "postgresql"
-cookbook "rbenv", git: 'git://github.com/RiotGames/rbenv-cookbook.git'
+cookbook "ruby_rbenv", git: 'git://github.com/chef-rbenv/ruby_rbenv.git'
 cookbook "unicorn"
