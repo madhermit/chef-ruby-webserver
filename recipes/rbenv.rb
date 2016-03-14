@@ -5,6 +5,7 @@
 
 node.default['rbenv']['rubies'] = [ "#{node[:app][:ruby_version]}" ]
 
+include_recipe "ruby_build"
 include_recipe "ruby_rbenv::system"
 
 #rbenv_ruby node[:app][:ruby_version]
