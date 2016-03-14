@@ -3,6 +3,9 @@
 # Recipe:: nginx-unicorn
 #
 
+#make sure rbenv is installed
+include_recipe "ruby-webserver::rbenv"
+
 include_recipe "nginx"
 
 
@@ -21,7 +24,9 @@ nginx_site "#{node[:app][:app_name]}" do
 end
 
 #install unicorn
-include_recipe "unicorn"
+rbenv_gem "unicorn" do
+  rbenv_version node[:app][:ruby_version]
+end
 
 #copy over the unicorn init daemon
 template "/etc/init.d/#{node[:app][:app_name]}" do

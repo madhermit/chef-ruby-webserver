@@ -6,13 +6,12 @@ description      'Installs/Configures ruby-webserver'
 long_description IO.read(File.join(File.dirname(__FILE__), 'README.md'))
 
 supports        'ubuntu'
-version          '0.1.6'
+version          '0.1.7'
 
 depends "apt"
 depends "hostname"
 depends "git"
 depends "nginx"
-depends "unicorn"
 depends "postgresql"
 depends "redis"
 depends "ruby_rbenv"
