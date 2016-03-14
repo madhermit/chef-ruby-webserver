@@ -2,7 +2,6 @@
 # Cookbook Name:: ruby-webserver
 # Recipe:: app_server
 #
-
 include_recipe "apt::default"
 include_recipe "build-essential"
 

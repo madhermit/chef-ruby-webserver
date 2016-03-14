@@ -27,3 +27,5 @@ default[:db][:database_name] = "#{node[:app][:app_name]}_#{node.chef_environment
 default['postgresql']['password']['postgres'] = "" #password for the postgres user
 default['postgresql']['client']['packages'] = [ 'libpq-dev' ]
 #echo -n 'somepassword''postgres' | openssl md5 | sed -e 's/.* /md5/'
+
+default['build-essential']['compile_time'] = true
