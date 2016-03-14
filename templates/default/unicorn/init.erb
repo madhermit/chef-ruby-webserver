@@ -1,0 +1,75 @@
+#!/bin/sh
+
+# Rendered by Chef - local changes will be replaced
+
+export RAILS_ENV=<%= node.chef_environment %>
+
+PATH=$PATH:/usr/local/bin
+APP_ROOT=<%= node[:app][:root_dir] %>/current
+PID=<%= node[:app][:root_dir] %>/current/tmp/pids/unicorn.pid
+CMD="cd $APP_ROOT && /opt/rbenv/shims/bundle exec unicorn -D -c <%= node[:app][:root_dir] %>/current/config/unicorn.rb -E <%= node.chef_environment %>"
+AS_USER=<%= node[:app][:user] %>
+set -u
+
+old_pid="$PID.oldbin"
+
+cd $APP_ROOT || exit 1
+
+sig () {
+  test -s "$PID" && kill -$1 `cat $PID`
+}
+
+oldsig () {
+  test -s $old_pid && kill -$1 `cat $old_pid`
+}
+
+workersig () {
+  workerpid="$APP_ROOT/tmp/pids/unicorn.$2.pid"
+
+  test -s "$workerpid" && kill -$1 `cat $workerpid`
+}
+
+run () {
+  if [ "$(id -un)" = "$AS_USER" ]; then
+    eval $1
+  else
+    su -c "$1" - $AS_USER
+  fi
+}
+
+case $1 in
+start)
+  sig 0 && echo >&2 "Already running" && exit 0
+  run "$CMD"
+  ;;
+stop)
+  sig QUIT && exit 0
+  echo >&2 "Not running"
+  ;;
+force-stop)
+  sig TERM && exit 0
+  echo >&2 "Not running"
+  ;;
+restart|reload)
+  sig HUP && echo reloaded OK && exit 0
+  echo >&2 "Couldn't reload, starting '$CMD' instead"
+  run "$CMD"
+  ;;
+upgrade)
+  sig USR2 && exit 0
+  echo >&2 "Couldn't upgrade, starting '$CMD' instead"
+  run "$CMD"
+  ;;
+kill_worker)
+  workersig QUIT $2 && exit 0
+  echo >&2 "Worker not running"
+  ;;
+rotate)
+        sig USR1 && echo rotated logs OK && exit 0
+        echo >&2 "Couldn't rotate logs" && exit 1
+        ;;
+*)
+  echo >&2 "Usage: $0 <start|stop|restart|upgrade|rotate|force-stop>"
+  exit 1
+  ;;
+esac
